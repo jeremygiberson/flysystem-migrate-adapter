@@ -6,21 +6,20 @@ namespace JeremyGiberson\Flysystem\Migrate;
 
 use League\Flysystem\AdapterInterface;
 use League\Flysystem\Config;
-use League\Flysystem\FilesystemInterface;
 
 class MigrateAdapter implements AdapterInterface
 {
-    /** @var  FilesystemInterface */
+    /** @var  AdapterInterface */
     private $source;
-    /** @var  FilesystemInterface */
+    /** @var  AdapterInterface */
     private $destination;
 
     /**
      * MigrateAdapter constructor.
-     * @param FilesystemInterface $source
-     * @param FilesystemInterface $destination
+     * @param AdapterInterface $source
+     * @param AdapterInterface $destination
      */
-    public function __construct(FilesystemInterface $source, FilesystemInterface $destination)
+    public function __construct(AdapterInterface $source, AdapterInterface $destination)
     {
         $this->source = $source;
         $this->destination = $destination;
@@ -37,7 +36,7 @@ class MigrateAdapter implements AdapterInterface
      */
     public function write($path, $contents, Config $config)
     {
-        // TODO: Implement write() method.
+        return $this->destination->write($path, $contents, $config);
     }
 
     /**
@@ -51,7 +50,7 @@ class MigrateAdapter implements AdapterInterface
      */
     public function writeStream($path, $resource, Config $config)
     {
-        // TODO: Implement writeStream() method.
+        return $this->destination->writeStream($path, $resource, $config);
     }
 
     /**
@@ -65,7 +64,7 @@ class MigrateAdapter implements AdapterInterface
      */
     public function update($path, $contents, Config $config)
     {
-        // TODO: Implement update() method.
+        return $this->preferDestination($path)->update($path, $contents, $config);
     }
 
     /**
@@ -79,7 +78,7 @@ class MigrateAdapter implements AdapterInterface
      */
     public function updateStream($path, $resource, Config $config)
     {
-        // TODO: Implement updateStream() method.
+        return $this->preferDestination($path)->updateStream($path, $resource, $config);
     }
 
     /**
@@ -92,7 +91,14 @@ class MigrateAdapter implements AdapterInterface
      */
     public function rename($path, $newpath)
     {
-        // TODO: Implement rename() method.
+        $result = false;
+        if ($this->destination->has($path)) {
+            $result = $this->destination->rename($path, $newpath);
+        }
+        if ($this->source->has($path)) {
+            return $this->source->rename($path, $newpath);
+        }
+        return $result;
     }
 
     /**
@@ -105,7 +111,7 @@ class MigrateAdapter implements AdapterInterface
      */
     public function copy($path, $newpath)
     {
-        // TODO: Implement copy() method.
+        return $this->preferDestination($path)->copy($path, $newpath);
     }
 
     /**
@@ -117,7 +123,14 @@ class MigrateAdapter implements AdapterInterface
      */
     public function delete($path)
     {
-        // TODO: Implement delete() method.
+        $result = false;
+        if ($this->destination->has($path)) {
+            $result = $this->destination->delete($path);
+        }
+        if ($this->source->has($path)) {
+            return $this->source->delete($path);
+        }
+        return $result;
     }
 
     /**
@@ -129,7 +142,14 @@ class MigrateAdapter implements AdapterInterface
      */
     public function deleteDir($dirname)
     {
-        // TODO: Implement deleteDir() method.
+        $result = false;
+        if ($this->destination->has($dirname)) {
+            $result = $this->destination->deleteDir($dirname);
+        }
+        if ($this->source->has($dirname)) {
+            return $this->source->deleteDir($dirname);
+        }
+        return $result;
     }
 
     /**
@@ -142,7 +162,7 @@ class MigrateAdapter implements AdapterInterface
      */
     public function createDir($dirname, Config $config)
     {
-        // TODO: Implement createDir() method.
+        return $this->destination->createDir($dirname, $config);
     }
 
     /**
@@ -155,7 +175,7 @@ class MigrateAdapter implements AdapterInterface
      */
     public function setVisibility($path, $visibility)
     {
-        // TODO: Implement setVisibility() method.
+        return $this->preferDestination($path)->setVisibility($path, $visibility);
     }
 
     /**
@@ -167,7 +187,10 @@ class MigrateAdapter implements AdapterInterface
      */
     public function has($path)
     {
-        // TODO: Implement has() method.
+        if ($this->destination->has($path) || $this->source->has($path)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -179,7 +202,7 @@ class MigrateAdapter implements AdapterInterface
      */
     public function read($path)
     {
-        // TODO: Implement read() method.
+        return $this->preferDestination($path)->read($path);
     }
 
     /**
@@ -191,7 +214,7 @@ class MigrateAdapter implements AdapterInterface
      */
     public function readStream($path)
     {
-        // TODO: Implement readStream() method.
+        return $this->preferDestination($path)->readStream($path);
     }
 
     /**
@@ -204,7 +227,29 @@ class MigrateAdapter implements AdapterInterface
      */
     public function listContents($directory = '', $recursive = false)
     {
-        // TODO: Implement listContents() method.
+        $merged = $this->destination->listContents($directory, $recursive);
+
+        $contains = function($path, $list) {
+            foreach($list as $entry) {
+                if ($entry['path'] === $path) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        foreach ($this->source->listContents($directory, $recursive) as $file) {
+            if(! $contains($file['path'], $merged)) {
+                $merged[] = $file;
+            }
+        }
+
+        $compare = function ($entryA, $entryB) {
+            return strcmp($entryA['path'], $entryB['path']);
+        };
+
+        usort($merged, $compare);
+        return $merged;
     }
 
     /**
@@ -216,7 +261,7 @@ class MigrateAdapter implements AdapterInterface
      */
     public function getMetadata($path)
     {
-        // TODO: Implement getMetadata() method.
+        return $this->preferDestination($path)->getMetadata($path);
     }
 
     /**
@@ -228,7 +273,7 @@ class MigrateAdapter implements AdapterInterface
      */
     public function getSize($path)
     {
-        // TODO: Implement getSize() method.
+        return $this->preferDestination($path)->getSize($path);
     }
 
     /**
@@ -240,7 +285,7 @@ class MigrateAdapter implements AdapterInterface
      */
     public function getMimetype($path)
     {
-        // TODO: Implement getMimetype() method.
+        return $this->preferDestination($path)->getMimetype($path);
     }
 
     /**
@@ -252,7 +297,7 @@ class MigrateAdapter implements AdapterInterface
      */
     public function getTimestamp($path)
     {
-        // TODO: Implement getTimestamp() method.
+        return $this->preferDestination($path)->getTimestamp($path);
     }
 
     /**
@@ -264,6 +309,20 @@ class MigrateAdapter implements AdapterInterface
      */
     public function getVisibility($path)
     {
-        // TODO: Implement getVisibility() method.
+        return $this->preferDestination($path)->getVisibility($path);
+    }
+
+    /**
+     * Prefer to use the destination adapter if it contains the requested path
+     * otherwise use the source adapter
+     * @param string $path
+     * @return AdapterInterface
+     */
+    private function preferDestination($path)
+    {
+        if ($this->destination->has($path)) {
+            return $this->destination;
+        }
+        return $this->source;
     }
 }

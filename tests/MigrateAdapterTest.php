@@ -3,237 +3,107 @@
 
 class MigrateAdapterTest extends PHPUnit_Framework_TestCase
 {
-    public function testMethodWriteWillWriteToDestination()
+    // write
+    public function testWriteMethodWrapsDestination_Write()
     {
 
     }
 
-    public function testMethodWriteStreamWillWriteToDestination()
+    // write stream
+    public function testWriteStreamMethodWrapsDestinationWriteStream()
     {
 
     }
+
     // update
-    public function testMethodUpdateWillWriteToDestinationIfNotInDestination()
+    public function testUpdateMethodWrapsDestinationUpdateIfDestinationHasPath()
     {
-        
+
     }
-    
-    public function testMethodUpdateWillUpdateDestination()
+
+    public function testUpdateMethodWrapsSourceUpdateIfDestinationDoesNotHavePath()
     {
-        
-    }
-    
-    public function testMethodUpdateWillUpdateSource()
-    {
-        
-    }
-    
-    public function testMethodUpdateWillNotUpdateSourceIfNotInSource()
-    {
-        
+
     }
 
     // updateStream
-    public function testMethodUpdateStreamWillWriteStreamToDestinationIfNotInDestination()
+    public function testUpdateStreamMethodWrapsDestinationUpdateStreamIfDestinationHasPath()
     {
 
     }
 
-    public function testMethodUpdateStreamWillUpdateStreamDestination()
+    public function testUpdateStreamMethodWrapsSourceUpdateStreamIfDestinationDoesNotHavePath()
     {
 
     }
 
-    public function testMethodUpdateStreamWillUpdateStreamSource()
-    {
-
-    }
-
-    public function testMethodUpdateStreamWillNotUpdateStreamSourceIfNotInSource()
-    {
-
-    }
-    
     // rename
-    public function testMethodRenameWillRenameDestination()
-    {
-        
-    }
-
-    public function testMethodRenameWillCopyToDestinationIfNotInDestination()
+    public function testRenameMethodWrapsSourceAndDestinationRename()
     {
 
     }
 
-    public function testMethodRenameWillDeleteSource()
+    public function testRenameMethodDoesNotWrapDestinationRenameIfDestinationDoesNotHavePath()
     {
 
     }
 
-    public function testMethodRenameWillNotModifySourceIfNotInSource()
-    {
-
-    }
-
-    public function testMethodRenameReturnsFalseIfNotInSourceOrDestination()
+    public function testRenameMethodDoesNotWrapSourceRenameIfSourceDoesNotHavePath()
     {
 
     }
 
     // copy
-    public function testMethodCopyWillCopyFromDestinationToDestination()
+    public function testCopyMethodWrapsDestinationCopyMethod()
     {
 
     }
 
-    public function testMethodCopyWillCopyFromSourceToDestinationIfNotInDestination()
-    {
-
-    }
-
-    public function testMethodCopyWillNotCopyToSource()
-    {
-
-    }
-
-    public function testMethodCopyWillReturnFalseIfNotInSourceOrDestination()
+    public function testCopyMethodWrapsSourceCopyMethodIfDestinationDoesNotHavePath()
     {
 
     }
 
     // delete
-    public function testMethodDeleteDeletesFromDestination()
+    public function testDeleteMethodWrapsSourceAndDestinationDelete()
     {
 
     }
 
-    public function testMethodDeleteDeletesFromSource()
+    public function testDeleteMethodDoesNotWrapDestinationDeleteWhenDestinationDoesNotHavePath()
     {
 
     }
 
-    public function testMethodDeleteReturnsFalseIfNotInSourceOrDestination()
+    public function testDeleteMethodDoesNotWrapSourceDeleteWhenSourceDoesNotHavePath()
     {
 
     }
 
     // deleteDir
-    public function testMethodDeleteDirDeletesFromDestination()
+    public function testDeleteDirMethodWrapsSourceAndDestinationDelete()
     {
 
     }
 
-    public function testMethodDeleteDirDeletesFromSource()
-    {
-
-    }
-
-    public function testMethodDeleteDirReturnsFalseIfNotInSourceOrDestination()
+    public function testDeleteDirMethodDoesNotWrapDestinationDeleteDirtWhenDirectoryNotPresent()
     {
 
     }
 
     // createDir
-    public function testMethodCreateDirCreatesDirInDestination()
-    {
-
-    }
-
-    public function testMethodCreateDirDoesNotCreateDirInSource()
-    {
-
-    }
 
     // setVisibility
-    public function testMethodSetVisibilitySetsVisibilityOnSource()
-    {
-
-    }
-
-    public function testMethodSetVisibilitySetsVisibilityOnDestination()
-    {
-
-    }
-
-    public function testMethodSetVisibilityReturnsFalseIfNotAbleToSetVisibilityOnSource()
-    {
-
-    }
-
-    public function testMethodSetVisibilityReturnsFalseIfNotAbleToSetVisibilityOnDestination()
-    {
-
-    }
 
     // getVisibility
-    public function testMethodGetVisibilityGetsVisibilityOnDestination()
-    {
-
-    }
-
-    public function testMethodGetsVisibilityGetsVisibilityOnSourceIfNotInDestination()
-    {
-
-    }
-
-    public function testMethodGetVisibilityReturnsFalseIfNotInSourceOrDestination()
-    {
-
-    }
 
     // has
-    public function testMethodHasReturnsTrueIfInDestination()
-    {
-
-    }
-
-    public function testMethodHasReturnsTrueIfInSource()
-    {
-
-    }
-
-    public function testMethodHasReturnsFalseIfNotInSourceOrDestination()
-    {
-
-    }
 
     // read
-    public function testMethodReadReadsFromDestination()
-    {
-
-    }
-
-    public function testMethodReadCopiesFromSourceThenReadsFromDestinationIfNotInDestination()
-    {
-
-    }
-
-    public function testMethodReadReturnsFalseIfNotInSourceOrDestination()
-    {
-
-    }
 
     // readStream
-    public function testMethodReadStreamReadsStreamFromDestination()
-    {
-
-    }
-
-    public function testMethodReadStreamCopiesFromSourceThenReadsStreamFromDestinationIfNotInDestination()
-    {
-
-    }
-
-    public function testMethodReadStreamReturnsFalseIfNotInSourceOrDestination()
-    {
-
-    }
 
     // listContents
-    public function testMethodListContentsListsMergedAndDedupedContentsFromSourceAndDestination()
-    {
-
-    }
 
     // getMetadata, getSize, getMimetype, getTimestamp
 
@@ -252,7 +122,7 @@ class MigrateAdapterTest extends PHPUnit_Framework_TestCase
      * @param string $method
      * @param string $path
      */
-    public function testMethodCallCopiesFromSourceThenCallsAgainstDestination($method, $path)
+    public function testMethodCallCallsAgainstSourceIfFileDoesNotExistInDestination($method, $path)
     {
 
     }
