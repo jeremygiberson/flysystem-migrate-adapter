@@ -81,6 +81,15 @@ class MigrateAdapterTest extends PHPUnit_Framework_TestCase
     }
 
     // deleteDir
+    public function testDeleteDirMethodWrapsSourceAndDestinationDelete()
+    {
+
+    }
+
+    public function testDeleteDirMethodDoesNotWrapDestinationDeleteDirtWhenDirectoryNotPresent()
+    {
+
+    }
 
     // createDir
 
