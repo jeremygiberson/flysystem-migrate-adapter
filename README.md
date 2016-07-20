@@ -78,7 +78,6 @@ Deletes the file `source/fileA.txt`.
 `$filesystem->delete('fileB.txt');`
 
 Deletes the file `dest/fileB.txt` and `source/fileB.txt`.
->>>>>>> master
 
 ## Installation
 
